@@ -1,4 +1,4 @@
-from .utils import NestedDict
+from .utils import NestedDict, nested_set
 
 import json
 
@@ -26,7 +26,10 @@ class BaseWidget(NestedDict):
 
     def init_from_kwargs(self, kwargs):
         for field in kwargs:
-            self[field] = kwargs[field]
+            if '__' in field:
+                self[field] = kwargs[field]
+            else:
+                nested_set(self, field, kwargs[field])
 
     def dump(self):
         return json.dumps(self)

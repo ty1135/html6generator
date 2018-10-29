@@ -39,10 +39,10 @@ if __name__ == '__main__':
     import pprint
     import atomic_widgets
 
-    b = atomic_widgets.Button(model__disable=True, props__icon='icon/url', props__label='token_label')
+    b = atomic_widgets.Button(disable=True, icon='icon/url', label='token_label')
     c = CompositeWidget(type='single-test')
 
-    # c.add_widgets(b)
-    # pprint.pprint(c)
+    c.add_widgets(b)
+    pprint.pprint(c)
 
     c.dump()

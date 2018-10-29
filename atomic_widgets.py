@@ -127,5 +127,5 @@ class Tree(GeneralWidget):
 
 if __name__ == '__main__':
     import pprint
-    b = Button(model__disable=True, prop__icon='icon/url', prop__label='token_label')
+    b = Button(disable=True, icon='icon/url', label='token_label')
     pprint.pprint(b)
