@@ -4,7 +4,7 @@ import uuid
 
 # Format
 class WidgetSkeleton(object):
-    __fields__ = [
+    __skeleton__ = [
         'version',
         'id',
         'view__type',
@@ -15,11 +15,17 @@ class WidgetSkeleton(object):
 
 
 # Default value
-class GeneralWidget(BaseWidget, WidgetSkeleton):
-    __default__ = {
-        'version': 1,
-        'id': uuid.uuid4,
-    }
+class WidgetDefault(object):
+    def get_defaults(self):
+        return [
+            ('version', 1),
+            ('id', lambda: str(uuid.uuid4())),
+            ('view__type', self.__class__.__name__.lower)
+        ]
+
+
+class GeneralWidget(BaseWidget, WidgetSkeleton, WidgetDefault):
+    pass
 
 
 # All Widgets
