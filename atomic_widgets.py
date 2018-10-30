@@ -1,4 +1,5 @@
 from fundamentals.widgets import BaseWidget
+from control import ControlAbility
 import uuid
 
 
@@ -24,7 +25,7 @@ class WidgetDefault(object):
         ]
 
 
-class GeneralWidget(BaseWidget, WidgetSkeleton, WidgetDefault):
+class GeneralWidget(BaseWidget, WidgetSkeleton, WidgetDefault, ControlAbility):
     pass
 
 

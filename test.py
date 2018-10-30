@@ -24,7 +24,7 @@ workbench.add_widgets(test_set, model, runtime_info)
 # 测试集 = 测试集标题 + bucket页 + 分页组件
 
 test_set_title = Label(text='ID: 1', description='测试集标签')
-bucket_container = CompositeWidget(layout='BoxLayout')  # TODO ! to be defined
+bucket_container = CompositeWidget(layout='BoxLayout', description='bucket_container')  # TODO ! to be defined
 test_set_pagination = Pagination(page=10, pages=10)
 
 test_set.add_widgets(test_set_title, bucket_container, test_set_pagination)
@@ -65,4 +65,10 @@ card_layout.add_widgets(log_container, preview_container)
 
 
 if __name__ == "__main__":
+    # log_button.add_method(
+    #     name='test_method',
+    #     http_method='put',
+    #     payload=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})],
+    #     body=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})]
+    # )
     whole.dump()

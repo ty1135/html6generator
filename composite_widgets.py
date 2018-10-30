@@ -1,4 +1,5 @@
 from fundamentals.widgets import BaseWidget
+from control import ControlAbility
 import uuid
 
 
@@ -32,7 +33,8 @@ class CompositeWidgetDefault(object):
         ]
 
 
-class CompositeWidget(BaseCompositeWidget, CompositeWidgetSkeleton, CompositeWidgetDefault):
+class CompositeWidget(BaseCompositeWidget, CompositeWidgetSkeleton,
+                      CompositeWidgetDefault, ControlAbility):
     pass
 
 
