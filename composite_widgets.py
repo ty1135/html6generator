@@ -17,7 +17,8 @@ class CompositeWidgetSkeleton(object):
         'id',
         'type',
         'description',
-        'component'
+        'layout',
+        'component',
     ]
 
 
@@ -27,7 +28,7 @@ class CompositeWidgetDefault(object):
         return [
             ('version', 1),
             ('id', lambda: str(uuid.uuid4())),
-            ('type', self.__class__.__name__.lower)
+            ('component', [])
         ]
 
 

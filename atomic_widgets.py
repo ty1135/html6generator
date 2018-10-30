@@ -9,7 +9,7 @@ class WidgetSkeleton(object):
         'id',
         'view__type',
         'view__description',
-        'props',
+        'view__props',
         'model',
     ]
 
@@ -32,8 +32,8 @@ class GeneralWidget(BaseWidget, WidgetSkeleton, WidgetDefault):
 class Button(GeneralWidget):
     __fields__ = [
         'model__disable',
-        'props__icon',
-        'props__label'
+        'view__props__icon',
+        'view__props__label'
     ]
 
 
@@ -128,4 +128,5 @@ class Tree(GeneralWidget):
 if __name__ == '__main__':
     import pprint
     b = Button(disable=True, icon='icon/url', label='token_label')
+
     pprint.pprint(b)

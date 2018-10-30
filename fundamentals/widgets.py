@@ -1,4 +1,4 @@
-from .utils import NestedDict, nested_set
+from .utils import NestedDict, nested_set, nested_del
 
 import json
 
@@ -10,6 +10,7 @@ class BaseWidget(NestedDict):
         self.init_from_default()
         self.init_from_widget()
         self.init_from_kwargs(kwargs)
+        nested_del(self)
 
     def init_from_skeleton(self):
         for field in super().__skeleton__:
@@ -32,4 +33,4 @@ class BaseWidget(NestedDict):
                 nested_set(self, field, kwargs[field])
 
     def dump(self):
-        return json.dumps(self)
+        print(json.dumps(self))
