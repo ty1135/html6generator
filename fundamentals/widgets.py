@@ -7,17 +7,12 @@ class BaseWidget(NestedDict):
     def __init__(self, **kwargs):
         super(BaseWidget, self).__init__()
         self.init_from_skeleton()
-        self.init_from_default()
         self.init_from_widget()
         self.init_from_kwargs(kwargs)
         nested_del(self)
 
     def init_from_skeleton(self):
-        for field in super().__skeleton__:
-            self[field] = None
-
-    def init_from_default(self):
-        for field, value in super().get_defaults():
+        for field, value in super().get_skeleton().items():
             self[field] = value() if callable(value) else value
 
     def init_from_widget(self):

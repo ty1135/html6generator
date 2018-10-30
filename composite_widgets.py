@@ -1,5 +1,6 @@
 from fundamentals.widgets import BaseWidget
 from control import ControlAbility
+from fundamentals.fields import RequiredField
 import uuid
 
 
@@ -11,30 +12,38 @@ class BaseCompositeWidget(BaseWidget):
             self['component'].append(w)
 
 
+# DefaultWidget
+
 # Format
-class CompositeWidgetSkeleton(object):
-    __skeleton__ = [
-        'version',
-        'id',
-        'type',
-        'description',
-        'layout',
-        'component',
-    ]
+class DefaultWidgetSkeleton(object):
+    def get_skeleton(self):
+        return {
+            'version': 1,
+            'id': lambda: str(uuid.uuid4()),
+            'type': RequiredField,
+            'description': None,
+            'component': [],
+        }
 
 
-# Default value
-class CompositeWidgetDefault(object):
-    def get_defaults(self):
-        return [
-            ('version', 1),
-            ('id', lambda: str(uuid.uuid4())),
-            ('component', [])
-        ]
+class DefaultWidget(BaseCompositeWidget, DefaultWidgetSkeleton, ControlAbility):
+    pass
+
+# CustomWidget
 
 
-class CompositeWidget(BaseCompositeWidget, CompositeWidgetSkeleton,
-                      CompositeWidgetDefault, ControlAbility):
+class CustomWidgetSkeleton(object):
+    def get_skeleton(self):
+        return {
+            'type': None,
+            'description': None,
+            'title': None,
+            'layout': RequiredField,
+            'component': []
+        }
+
+
+class CustomWidget(BaseCompositeWidget, CustomWidgetSkeleton, ControlAbility):
     pass
 
 
@@ -43,7 +52,7 @@ if __name__ == '__main__':
     import atomic_widgets
 
     b = atomic_widgets.Button(disable=True, icon='icon/url', label='token_label')
-    c = CompositeWidget(type='single-test')
+    c = DefaultWidget(type='single-test')
 
     c.add_widgets(b)
     pprint.pprint(c)

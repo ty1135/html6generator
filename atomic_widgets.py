@@ -5,27 +5,18 @@ import uuid
 
 # Format
 class WidgetSkeleton(object):
-    __skeleton__ = [
-        'version',
-        'id',
-        'view__type',
-        'view__description',
-        'view__props',
-        'model',
-    ]
+    def get_skeleton(self):
+        return {
+            'version': 1,
+            'id': lambda: str(uuid.uuid4()),
+            'view__type': self.__class__.__name__.lower,
+            'view__description': None,
+            'view__props': None,
+            'model': None
+        }
 
 
-# Default value
-class WidgetDefault(object):
-    def get_defaults(self):
-        return [
-            ('version', 1),
-            ('id', lambda: str(uuid.uuid4())),
-            ('view__type', self.__class__.__name__.lower)
-        ]
-
-
-class GeneralWidget(BaseWidget, WidgetSkeleton, WidgetDefault, ControlAbility):
+class GeneralWidget(BaseWidget, WidgetSkeleton, ControlAbility):
     pass
 
 

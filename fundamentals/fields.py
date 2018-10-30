@@ -1,0 +1,2 @@
+class RequiredField(object):
+    pass
