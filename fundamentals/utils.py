@@ -19,7 +19,7 @@ class NestedDict(dict):
 
     # def nested_get(self, item):
     #     items = item.split('__')
-    # 
+    #
     #     if len(items) > 1:
     #         cur_dict = self
     #         for it in items:
