@@ -39,28 +39,27 @@ class Button(GeneralWidget):
 
 class CheckBox(GeneralWidget):
     __fields__ = [
-        'props__options',
+        'view__props__options',
         'model__checked'
     ]
 
 
 class DotCluster(GeneralWidget):
     __fields__ = [
-        'props__row_size',
+        'view__props__row_size',
         'model__dot'
     ]
 
 
 class Label(GeneralWidget):
     __fields__ = [
-        'props__icon',
-        'props__text'
+        'view__props__icon',
+        'view__props__text'
     ]
 
 
 class Pagination(GeneralWidget):
     __fields__ = [
-        'view__props',
         'model__page',
         'model__pages'
     ]
@@ -74,33 +73,33 @@ class ProgressBar(GeneralWidget):
 
 class Radio(GeneralWidget):
     __fields__ = [
-        'props__options',
+        'view__props__options',
         'model__checked'
     ]
 
 
 class ScrollBar(GeneralWidget):
     __fields__ = [
-        'props__label',
-        'props__min',
-        'props__max',
-        'props__extent',
+        'view__props__label',
+        'view__props__min',
+        'view__props__max',
+        'view__props__extent',
         'model__value'
     ]
 
 
 class Select(GeneralWidget):
     __fields__ = [
-        'props__label',
-        'props__option',
+        'view__props__label',
+        'view__props__option',
         'model__choice'
     ]
 
 
 class TextArea(GeneralWidget):
     __fields__ = [
-        'props__label',
-        'props__palceholder',
+        'view__props__label',
+        'view__props__palceholder',
         'model__editable',
         'model__text'
     ]
@@ -108,8 +107,8 @@ class TextArea(GeneralWidget):
 
 class TextField(GeneralWidget):
     __fields__ = [
-        'props__label',
-        'props__palceholder',
+        'view__props__label',
+        'view__props__palceholder',
         'model__editable',
         'model__text'
     ]
