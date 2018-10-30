@@ -30,7 +30,8 @@ class BaseWidget(NestedDict):
     def onto(self, *args):
         ret = {}
         for arg in args:
-            ret[arg] = self[args]
+            ret[arg] = self.nested_get(arg)
+        return ret
 
     def dump(self):
         print(json.dumps(self))

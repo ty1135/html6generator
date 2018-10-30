@@ -2,6 +2,7 @@ import copy
 
 # Nested Dictionary
 
+
 class NestedDict(dict):
     def __setitem__(self, key, value):
         keys = key.split('__')
@@ -11,21 +12,21 @@ class NestedDict(dict):
             for k in keys[:-1]:
                 if k not in cur_dict or cur_dict[k] is None:
                     cur_dict[k] = {}
-                cur_dict = dict.__getitem__(cur_dict, k)
+                cur_dict = cur_dict[k]
             cur_dict[keys[-1]] = value
         else:
             super().__setitem__(key, value)
 
-    def __getitem__(self, item):
-        items = item.split('__')
-
-        if len(items) > 1:
-            cur_dict = self
-            for it in items:
-                cur_dict = dict.__getitem__(cur_dict, it)
-            return cur_dict
-        else:
-            return nested_get(self, item)
+    # def nested_get(self, item):
+    #     items = item.split('__')
+    # 
+    #     if len(items) > 1:
+    #         cur_dict = self
+    #         for it in items:
+    #             cur_dict = dict.__getitem__(cur_dict, it)
+    #         return cur_dict
+    #     else:
+    #         return nested_get(self, item)
 
 
 def normalize(func):
@@ -67,6 +68,8 @@ def nested_del(a_dict):
 
 def nested_get(a_dict, item):
     for key in a_dict:
+        print(key, a_dict)
+        print('-')
         ret = dict.__getitem__(a_dict, key)
         if key == item:
             return ret
@@ -90,4 +93,5 @@ if __name__ == "__main__":
         }
     }
 
-    dd = NestedDict(d)
+    ret = nested_get(d, 'b')
+    print(ret)

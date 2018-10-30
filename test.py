@@ -65,10 +65,11 @@ card_layout.add_widgets(log_container, preview_container)
 
 
 if __name__ == "__main__":
+    p = test_set_pagination
     log_button.add_method(
         name='test_method',
         http_method='put',
-        payload=[('1', {"some": "thing"}), ('id1', {"some": "thing"})],
+        payload=[(p['id'], p.onto('page', 'pages')), ('id1', {"some": "thing"})],
         body=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})]
     )
     whole.dump()
