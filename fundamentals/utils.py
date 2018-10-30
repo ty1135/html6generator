@@ -16,6 +16,17 @@ class NestedDict(dict):
         else:
             super().__setitem__(key, value)
 
+    def __getitem__(self, item):
+        items = item.split('__')
+
+        if len(items) > 1:
+            cur_dict = self
+            for it in items:
+                cur_dict = dict.__getitem__(cur_dict, it)
+            return cur_dict
+        else:
+            return nested_get(self, item)
+
 
 def normalize(func):
     def wrapper(a_dict, key, value):
@@ -54,6 +65,21 @@ def nested_del(a_dict):
         del some_dict[some_key]
 
 
+def nested_get(a_dict, item):
+    for key in a_dict:
+        ret = dict.__getitem__(a_dict, key)
+        if key == item:
+            return ret
+        elif isinstance(ret, dict):
+            try:
+                return nested_get(ret, item)
+            except KeyError:
+                pass
+        else:
+            continue
+        raise KeyError('{} not found'.format(item))
+
+
 if __name__ == "__main__":
     d = {
         "a": {
@@ -64,5 +90,4 @@ if __name__ == "__main__":
         }
     }
 
-    nested_del(d)
-    print(d)
+    dd = NestedDict(d)
