@@ -27,5 +27,10 @@ class BaseWidget(NestedDict):
             else:
                 nested_set(self, field, kwargs[field])
 
+    def onto(self, *args):
+        ret = {}
+        for arg in args:
+            ret[arg] = self[args]
+
     def dump(self):
         print(json.dumps(self))

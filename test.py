@@ -68,7 +68,7 @@ if __name__ == "__main__":
     log_button.add_method(
         name='test_method',
         http_method='put',
-        payload=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})],
+        payload=[('1', {"some": "thing"}), ('id1', {"some": "thing"})],
         body=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})]
     )
     whole.dump()

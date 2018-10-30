@@ -11,7 +11,7 @@ class NestedDict(dict):
             for k in keys[:-1]:
                 if k not in cur_dict or cur_dict[k] is None:
                     cur_dict[k] = {}
-                cur_dict = cur_dict[k]
+                cur_dict = dict.__getitem__(cur_dict, k)
             cur_dict[keys[-1]] = value
         else:
             super().__setitem__(key, value)
