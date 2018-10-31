@@ -32,6 +32,7 @@ class Button(GeneralWidget):
 class CheckBox(GeneralWidget):
     __fields__ = [
         'view__props__options',
+        'view__props__label',
         'model__checked'
     ]
 

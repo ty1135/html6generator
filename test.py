@@ -17,17 +17,31 @@ workbench.add_widgets(test_set, model, runtime_info)
 # ------------------------------------------------------
 # ------------------------------------------------------
 
-# 测试集 = 测试集标题 + bucket页 + 分页组件
+# 测试集 = 测试集标题 + PopLayout(过滤) + bucket页 + 分页组件
 
 test_set_title = Label(text='测试集', description='测试集标签')
+pop_up = CustomWidget(layout='PopLayout', description='第一个是触发点,第二是弹出的东西')
 bucket_container = CustomWidget(layout='BoxLayout', description='bucket_container')  # TODO ! to be defined
 test_set_pagination = Pagination(page=10, pages=10)
 
 test_set.add_widgets(test_set_title, bucket_container, test_set_pagination)
 
 
+# poplayout = 触发button + filter_condition
+
+trigger_button = Button(label='筛选', disable=False)
+filter_condition = CustomWidget(layout='BoxLayout', description='条件框')
+pop_up.add_widgets(trigger_button, filter_condition)
+
+
+# filter_condition  = checkbox + 确定button
+test_set_conditions = CheckBox(options=[{"text": '标签', "value": "标签"}, {"text": '转发数', "value": "转发数"}],
+                               label='测试集显示属性', checked=["标签", "转发数"])
+filter_button = Button(label='确定', disable=False)
+filter_condition.add_widgets(test_set_conditions, filter_button)
+
 # bucket = sentence_id + sentence + 6个label(标签, 素材体积, 句子数, 总字数, 点赞数, 转发数)
-bucket = DefaultWidget(type='bucket', description='单个bucket结构')
+bucket = DefaultWidget(type='rnc-single-test', description='单个bucket结构')
 
 sentence_id = Label(text='1')
 sentence = TextArea(text='对开门设计 起亚Novo概念车正式亮相_汽车之家', editable=False)
@@ -57,9 +71,9 @@ analysis = Button(label='分析', disable=False)
 model.add_widgets(model_title, order_rule, select_rule, clip_rule, glue_rule, analysis)
 
 
-# 单条排序规则 = 条件类别Label + 标签Seclet +  权重输入(textfield) + 新增按钮 + 删除按钮
+# 单条排序规则 = 条件类别Label + 标签textfield +  权重输入(textfield) + 新增按钮 + 删除按钮
 
-single_order_rule = DefaultWidget(type='single_order_rule', description='单条排序规则')
+single_order_rule = DefaultWidget(type='rnc-single-order-rule', description='单条排序规则')
 
 condition_type = Label(text='标签条件（选填）', description='条件类别')
 tag_select = TextField(label='标签:', editable=True)
@@ -76,12 +90,12 @@ order_rule_title = Label(text='排序规则')
 order_rule.add_widgets(order_rule_title, single_order_rule)
 
 
-# 默认的单条筛选规则 = 筛选内容label + Select筛选条件 + Textfield边界值
+# 默认的单条筛选规则 = 筛选内容textfield + Select筛选条件 + Textfield边界值
 select_content = TextField(label='筛选内容：', text='筛选加权分', editable=False)
 select_condition_select = Select(label='筛选条件',option=[{"text": '大于', "value": '大于'},
                                          {"text": '小于', "value": '小于'}], choice='小于')
 border_value = TextField(label='边界值：', editable=True)
-single_select_rule = DefaultWidget(type='single_select_rule', description='单条筛选规则')
+single_select_rule = DefaultWidget(type='rnc-single-select-rule', description='单条筛选规则')
 single_select_rule.add_widgets(select_content, select_condition_select)
 
 
@@ -92,14 +106,14 @@ select_rule.add_widgets(select_rule_title, single_select_rule)
 
 # 裁剪规则容器 = 默认文字排版 + 默认召回图片
 
-word_arrangment = DefaultWidget(type='word_arrangment', description='文字排版')
-pic_search = DefaultWidget(type='pic_search', description='召回图片')
+word_arrangment = DefaultWidget(type='rnc-text-typeset', description='文字排版')
+pic_search = DefaultWidget(type='rnc-pic-search', description='召回图片')
 clip_rule.add_widgets(word_arrangment, pic_search)
 
-# 默认召回图片 = 召回图片title + 属性label + 关系Select + 值select +
+# 默认召回图片 = #召回图片title + 属性label + 关系Select + 值textfield +
 #            +  输出数量textField+位置select +label图片选择顺序 + TODO 蛇皮表格
 
-pic_title = Label(text='召回图片')
+# pic_title = Label(text='召回图片')
 attr_label = Label(text='属性label：')
 relation_select = Select(label='关系：', option=[{"text": '等于', "value": '等于'}], choice='等于')
 value_select = TextField(label='值：', editable=True)
@@ -109,7 +123,136 @@ pos_select = Select(label='位置：', option=[{"text": '前', "value": '前'},
                                          {"text": '后', "value": '后'}], choice='后')
 pic_order_label = Label(text='label图片选择顺序')
 
-pic_search.add_widgets(pic_title, attr_label, relation_select, value_select, output_num, pos_select, pic_order_label)
+snake_table = {
+  "version": 1,
+  "id": "e2d1dde9-6d2e-42b9-a108-499fea2ca442",
+  "view": {
+    "name": "tree",
+    "description": "树",
+    "props": {
+      "multiple": True,
+    }
+  },
+  "model": {
+    "title": "图片选择顺序",
+    "node": [
+      {
+        "id": "42fbf196-192d-488d-a7cc-461ffa01251a",
+        "name": "1",
+        "number": 1,
+        "action": [
+          "create",
+          "delete"
+        ],
+        "children": [
+          {
+            "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+            "name": "外观.正前",
+            "number": 1,
+            "action": [
+              "update",
+              "delete"
+            ],
+            "children": []
+          }
+        ]
+      }]
+  },
+  "control": {
+    "create": {
+      "endpoint": "post /domain/resource",
+      "payload": [
+        {
+          "id": "e2d1dde9-6d2e-42b9-a108-499fea2ca442",
+          "value": {
+            "relation": "child",
+            "id": "e2d1dde9-6d2e-42b9-a108-499fea2ca442",
+            "name": "2",
+            "number": 0,
+            "action": [
+              "create",
+              "update",
+              "delete"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "status": True,
+        "body": {
+          "id": "e2d1dde9-6d2e-42b9-a108-499fea2ca442",
+          "value": {
+            "relation": "child",
+            "id": "e2d1dde9-6d2e-42b9-a108-499fea2ca442",
+            "name": "2",
+            "number": 0,
+            "action": [
+              "create",
+              "update",
+              "delete"
+            ]
+          }
+        }
+      }
+    },
+    "update": {
+      "endpoint": "put /domain/resource",
+      "payload": [
+        {
+          "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+          "value": {
+            "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+            "name": "外观.侧面",
+            "number": 0,
+            "action": [
+              "update",
+              "delete"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "status": True,
+        "body": [
+          {
+            "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+            "value": {
+              "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+              "name": "外观.侧面",
+              "number": 0,
+              "action": [
+                "update",
+                "delete"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "delete": {
+      "endpoint": "del /domain/resource",
+      "payload": [
+        {
+          "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+          "value": {
+            "id": "14145bea-22f5-427f-9282-e7a926d942ad",
+            "name": "外观.侧面",
+            "number": 0,
+            "action": [
+              "update",
+              "delete"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "status": True
+      }
+    }
+  }
+}
+
+pic_search.add_widgets(attr_label, relation_select, value_select, output_num, pos_select, pic_order_label, snake_table)
 
 # 默认文字排版 = 粒度select + 最大字数（句子数）textfield+ Label多余文字处理 +CheckBox
 granularity = Select(label='粒度：', option=[
@@ -124,7 +267,7 @@ word_arrangment.add_widgets(granularity, max_word, extra_word_label, extra_word)
 
 # 拼接规则 =  拼接规则label + 单条默认拼接规则
 glue_rule_title = Label(text='拼接规则')
-single_glue_rule = DefaultWidget(type='single_glue_rule', desciption='拼接规则默认组件')
+single_glue_rule = DefaultWidget(type='rnc-glue-rule', desciption='拼接规则默认组件')
 
 glue_rule.add_widgets(glue_rule_title, single_glue_rule)
 
@@ -168,7 +311,7 @@ card_layout.add_widgets(log_container, preview_container)
 
 
 # single_rnc_log = id_label + log_text + 若干个 key,value 的textField
-single_rnc_log = DefaultWidget(type='single_rnc_log', description='rnc单条日志结构')
+single_rnc_log = DefaultWidget(type='rnc-single-log', description='rnc单条日志结构')
 log_label = Label(text='ID: 3')
 log_text = TextField(text="""ID： 2
 作为哈弗F系列诞生的第二款车型，哈弗F7以哈弗HB-02概念车为原型。车厂针对市场需求对外观、内饰和动力系统进行了相应的改进。新车采用了哈弗最新的家族化设计风格，前脸处装配面积巨大的六边形中网，搭配鹰眼状的LED大灯，显得十分动感和犀利。
@@ -215,7 +358,8 @@ c_bucket.add_widgets(c_sentence_id, c_sentence, c_tag, c_volume, c_num_sentence,
 test_set_pagination.add_method(
     name='paging',
     http_method='put',
-    payload=[(test_set_pagination['id'], {"page": 1, "pages": 2})],
+    payload=[(test_set_pagination['id'], {"page": 1, "pages": 2}),
+             (filter_condition['id'], {"checked": ["标签", "总字数"]})],
     body=[(c_bucket['id'], c_bucket)],
 )
 
@@ -378,9 +522,23 @@ analysis.add_method(
     ],
     body=[
         (log_container['id'], log_container),
-        (preview_container['id'], preview_container) # 如果不这样放在一个结果里返回 分不清预览和详情的边界
+        (preview_container['id'], preview_container)
     ]
 )
+
+####################################################
+
+filter_button.add_method(
+    name='filter',
+    http_method='get',
+    payload=[
+        (filter_condition['id'], {"checked": ["标签", "总字数"]}),
+        (test_set_pagination['id'], {"page": 1, "pages": 2})],
+    body=[(c_bucket['id'], c_bucket)]
+)
+
+
+
 if __name__ == "__main__":
     # p = test_set_pagination
     # log_button.add_method(
@@ -389,6 +547,7 @@ if __name__ == "__main__":
     #     payload=[(p['id'], {"some": "thing"}), ('id1', {"some": "thing"})],
     #     body=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})]
     # )
+    # ret = workbench.dump()
     ret = workbench.dump()
     print('目前所有div 都是自定义 且没有type')
 
