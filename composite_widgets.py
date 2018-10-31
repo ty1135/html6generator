@@ -35,6 +35,7 @@ class DefaultWidget(BaseCompositeWidget, DefaultWidgetSkeleton, ControlAbility):
 class CustomWidgetSkeleton(object):
     def get_skeleton(self):
         return {
+            'id': lambda: str(uuid.uuid4()),
             'type': None,
             'description': None,
             'title': None,

@@ -34,4 +34,6 @@ class BaseWidget(NestedDict):
         return ret
 
     def dump(self):
-        print(json.dumps(self))
+        ret = json.dumps(self)
+        print(ret)
+        return ret

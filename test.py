@@ -30,12 +30,12 @@ test_set.add_widgets(test_set_title, bucket_container, test_set_pagination)
 bucket = DefaultWidget(type='bucket', description='单个bucket结构')
 
 sentence_id = Label(text='1')
-sentence = Label(text='对开门设计 起亚Novo概念车正式亮相_汽车之家')
-tag = Label(text='标签：标题')
-volume = Label(text='素材体积：')
-num_sentence = Label(text='句子数：1')
-num_up = Label(text='点赞数：-')
-num_repost = Label(text='转发数：-')
+sentence = TextArea(text='对开门设计 起亚Novo概念车正式亮相_汽车之家', editable=False)
+tag = TextField(label='标签：', text='标题', editable=False)
+volume = TextField(label='素材体积：', text='10', editable=False)
+num_sentence = TextField(label='句子数:', text='1', editable=False)
+num_up = TextField(label='点赞数:', text='1', editable=False)
+num_repost = TextField(label='转发数:', text='1', editable=False)
 
 bucket.add_widgets(sentence_id, sentence, tag, volume, num_sentence, num_up, num_repost)
 
@@ -65,7 +65,7 @@ condition_type = Label(text='标签条件（选填）', description='条件类�
 tag_select = TextField(label='标签:', editable=True)
 weight_input = TextField(label='权重：', editable=True, text='10')
 order_add_button = Button(icon='url/to/symbol', disable=False)
-order_del_button = Button(label='删除', disable=True)  # TODO 第一个不能删除吗
+order_del_button = Button(label='删除', disable=True)
 
 
 single_order_rule.add_widgets(condition_type, tag_select, weight_input, order_add_button, order_del_button)
@@ -76,11 +76,11 @@ order_rule_title = Label(text='排序规则')
 order_rule.add_widgets(order_rule_title, single_order_rule)
 
 
-# 默认的单条筛选排序规则 = 筛选内容textField + Select筛选条件 + Textfield边界值
-select_content = TextField(text='筛选内容：筛选加权分')
+# 默认的单条筛选规则 = 筛选内容label + Select筛选条件 + Textfield边界值
+select_content = TextField(label='筛选内容：', text='筛选加权分', editable=False)
 select_condition_select = Select(label='筛选条件',option=[{"text": '大于', "value": '大于'},
                                          {"text": '小于', "value": '小于'}], choice='小于')
-border_value = TextField(label='边界值：')
+border_value = TextField(label='边界值：', editable=True)
 single_select_rule = DefaultWidget(type='single_select_rule', description='单条筛选规则')
 single_select_rule.add_widgets(select_content, select_condition_select)
 
@@ -88,7 +88,6 @@ single_select_rule.add_widgets(select_content, select_condition_select)
 # 筛选内容容器 = 筛选规则容器标题 + 一个默认的筛选排序规则
 select_rule_title = Label(text='筛选规则')
 select_rule.add_widgets(select_rule_title, single_select_rule)
-
 
 
 # 裁剪规则容器 = 默认文字排版 + 默认召回图片
@@ -116,15 +115,22 @@ pic_search.add_widgets(pic_title, attr_label, relation_select, value_select, out
 granularity = Select(label='粒度：', option=[
     {"text": '字数', "value": '字数'},
     {"text": '句子数', "value": '句子数'}], choice='句子数')
-max_word = TextField(label='最大字数（句子数）：')
+max_word = TextField(label='最大字数（句子数）：', editable=True)
 extra_word_label = Label(text='最大字数（句子数）：')
 extra_word = CheckBox(options=[{"text": "分段", "value": "分段"}, {"text": "删除尾句", "value": "删除尾句"}], checked="删除尾句")
 
 word_arrangment.add_widgets(granularity, max_word, extra_word_label, extra_word)
 
 
-# 拼接规则 = 2label + 4个select + checkbox
+# 拼接规则 =  拼接规则label + 单条默认拼接规则
 glue_rule_title = Label(text='拼接规则')
+single_glue_rule = DefaultWidget(type='single_glue_rule', desciption='拼接规则默认组件')
+
+glue_rule.add_widgets(glue_rule_title, single_glue_rule)
+
+
+# 单条默认拼接规则 = 4个select + checkbox
+
 glue_rule_spec = Label(text='素材等价段落数')
 glue_pic = TextField(label='图片(单位：段)', editable=True)
 glue_word = TextField(label='文字(单位：段)', editable=True)
@@ -132,7 +138,7 @@ glue_video = TextField(label='视频(单位：段)', editable=True)
 glue_para_limit = TextField(label='图片(单位：段)', editable=True)
 preserve_last = CheckBox(options=[{"text": "保留最后一段", "value": "保留最后一段"}], checked="保留最后一段")
 
-glue_rule.add_widgets(glue_rule_title, glue_rule_spec, glue_pic, glue_word, glue_video, glue_para_limit, preserve_last)
+single_glue_rule.add_widgets(glue_rule_spec, glue_pic, glue_word, glue_video, glue_para_limit, preserve_last)
 
 # ------------------------------------------------------
 # ------------------------------------------------------
@@ -155,23 +161,34 @@ tap.add_widgets(log_button, preview_button)
 
 # cardlayout = log_container + preview_container
 
-log_container = DefaultWidget(type='log_container', description='log_container') # TODO 本来应该是custom 但是custom就没有id, 跟最后分析的method冲突
-preview_container = DefaultWidget(type='preview_container', description='preview_container')
+log_container = CustomWidget(layout='BoxLayout', description='log_container')
+preview_container = CustomWidget(layout='BoxLayout', description='preview_container')
 
 card_layout.add_widgets(log_container, preview_container)
 
 
-# log_container = 几个或者多个 log_example TextField
-log_example = TextField(text="""ID： 2
+# single_rnc_log = id_label + log_text + 若干个 key,value 的textField
+single_rnc_log = DefaultWidget(type='single_rnc_log', description='rnc单条日志结构')
+log_label = Label(text='ID: 3')
+log_text = TextField(text="""ID： 2
 作为哈弗F系列诞生的第二款车型，哈弗F7以哈弗HB-02概念车为原型。车厂针对市场需求对外观、内饰和动力系统进行了相应的改进。新车采用了哈弗最新的家族化设计风格，前脸处装配面积巨大的六边形中网，搭配鹰眼状的LED大灯，显得十分动感和犀利。
 内饰方面，哈弗F7采用环抱式座舱设计，装备运动感强烈的三幅式平底方向盘，同时装配了全液晶仪表盘、大尺寸的中控屏幕和电子档把。哈弗F7配备智能语音控制系统、超级智能APP、智能互娱系统，ACC自适应巡航、车道保持、自动泊车等智能科技和主动安全系统。此外，F7还将搭载“i-pilot”智能领航系统，可实现L2级自动驾驶。
-""")
+""", editable=False)
+eg_kv_tf1 = TextField(label='加权分数', text='150')
+eg_kv_tf2 = TextField(label='状态： ', text='显示')
+eg_kv_tf3 = TextField(label='第一张图匹配到图像类别', text='外观.右后')
+single_rnc_log.add_widgets(log_label, log_text, eg_kv_tf1, eg_kv_tf2, eg_kv_tf3)
 
-log_container.add_widgets(log_example)
+# log_container = 几个或者多个 single_rnc_log
+log_container.add_widgets(single_rnc_log)
 
-# preview_container = 若干个textField 和 #TODO 图未定义
+# preview_container = 若干个label
 
-
+para1 = Label(text='文章段落1')
+pic1 = Label(icon='url/to/img1')
+para2 = Label(text='文章段落2')
+pic1 = Label(icon='url/to/img2')
+preview_container.add_widgets(para1, pic1, para2, pic1)
 
 
 
@@ -372,5 +389,15 @@ if __name__ == "__main__":
     #     payload=[(p['id'], {"some": "thing"}), ('id1', {"some": "thing"})],
     #     body=[('id1', {"some": "thing"}), ('id1', {"some": "thing"})]
     # )
-    workbench.dump()
+    ret = workbench.dump()
     print('目前所有div 都是自定义 且没有type')
+
+    import subprocess
+
+
+    def write_to_clipboard(output):
+        process = subprocess.Popen(
+            'pbcopy', env={'LANG': 'en_US.UTF-8'}, stdin=subprocess.PIPE)
+        process.communicate(output.encode('utf-8'))
+
+    write_to_clipboard(ret)
