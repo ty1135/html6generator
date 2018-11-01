@@ -4,29 +4,55 @@ import copy
 
 
 class NestedDict(dict):
-    def __setitem__(self, key, value):
+    def long_set(self, key, value):
         keys = key.split('__')
 
-        if len(keys) > 1:
-            cur_dict = self
-            for k in keys[:-1]:
-                if k not in cur_dict or cur_dict[k] is None:
-                    cur_dict[k] = {}
-                cur_dict = cur_dict[k]
-            cur_dict[keys[-1]] = value
-        else:
-            super().__setitem__(key, value)
+        cur_dict = self
+        for k in keys[:-1]:
+            if k not in cur_dict or cur_dict[k] is None:
+                cur_dict[k] = {}
+            cur_dict = cur_dict[k]
+        cur_dict[keys[-1]] = value
 
-    # def nested_get(self, item):
-    #     items = item.split('__')
-    #
-    #     if len(items) > 1:
-    #         cur_dict = self
-    #         for it in items:
-    #             cur_dict = dict.__getitem__(cur_dict, it)
-    #         return cur_dict
-    #     else:
-    #         return nested_get(self, item)
+    def long_get(self, item):
+        items = item.split('__')
+
+        cur_dict = self
+        for it in items:
+            cur_dict = cur_dict[it]
+        return cur_dict
+
+    def short_get(self, item):
+        ret_dict = self._short_get(item)
+        return ret_dict[item]
+
+    def short_set(self, item, value):
+        ret_dict = self.short_get(item)
+        print(ret_dict, item, value)
+        print("-"*10)
+        ret_dict[item] = value
+
+    def _short_get(self, item, found=None):
+        found_is_none = found is None
+        found = [] if found_is_none else found
+
+        for key in self:
+            if key == item:
+                found.append(self)
+            elif isinstance(self[key], dict):
+                NestedDict._short_get(self[key], item, found=found)
+            else:
+                continue
+
+        if found_is_none:
+            if not found:
+                raise KeyError('{} not found'.foramt(item))
+            elif len(found) > 1:
+                raise KeyError('more than two nested keys with same name "{}"'.format(item))
+            else:
+                return found[0]
+
+
 
 
 def normalize(func):
@@ -66,32 +92,24 @@ def nested_del(a_dict):
         del some_dict[some_key]
 
 
-def nested_get(a_dict, item):
-    for key in a_dict:
-        print(key, a_dict)
-        print('-')
-        ret = dict.__getitem__(a_dict, key)
-        if key == item:
-            return ret
-        elif isinstance(ret, dict):
-            try:
-                return nested_get(ret, item)
-            except KeyError:
-                pass
-        else:
-            continue
-        raise KeyError('{} not found'.format(item))
-
-
 if __name__ == "__main__":
     d = {
         "a": {
             "b": {
-                "k": None
+                "k": 1
             },
-            "k": None
+            "k": {
+                "g": 2
+            }
         }
     }
 
-    ret = nested_get(d, 'b')
+    a = NestedDict({'r': 's'})
+
+    t = NestedDict(d)
+    # t.nested_set('a__b__k', '$')
+    # t.nested_set('k', '$')
+    # ret = t.short_get('b')
+    # ret = t.long_set('k', '20')
+    ret = a.short_get('r')
     print(ret)
