@@ -1,8 +1,3 @@
-import copy
-
-# Nested Dictionary
-
-
 class NestedDict(dict):
     def long_set(self, key, value):
         keys = key.split('__')
@@ -27,9 +22,7 @@ class NestedDict(dict):
         return ret_dict[item]
 
     def short_set(self, item, value):
-        ret_dict = self.short_get(item)
-        print(ret_dict, item, value)
-        print("-"*10)
+        ret_dict = self._short_get(item)
         ret_dict[item] = value
 
     def _short_get(self, item, found=None):
@@ -46,36 +39,11 @@ class NestedDict(dict):
 
         if found_is_none:
             if not found:
-                raise KeyError('{} not found'.foramt(item))
+                raise KeyError('{} not found, check spelling'.format(item))
             elif len(found) > 1:
                 raise KeyError('more than two nested keys with same name "{}"'.format(item))
             else:
                 return found[0]
-
-
-
-
-def normalize(func):
-    def wrapper(a_dict, key, value):
-        dict_copy = copy.deepcopy(a_dict)
-        func(a_dict, key, value)
-        if a_dict == dict_copy:
-            a_dict[key] = value
-    return wrapper
-
-
-def _nested_set(a_dict, key, value):
-    for k in a_dict:
-        if k == key:
-            a_dict[key] = value
-            return
-        elif isinstance(a_dict[k], dict):
-            _nested_set(a_dict[k], key, value)
-        else:
-            continue
-
-
-nested_set = normalize(_nested_set)
 
 
 def nested_del(a_dict):
@@ -92,6 +60,15 @@ def nested_del(a_dict):
         del some_dict[some_key]
 
 
+class Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
 if __name__ == "__main__":
     d = {
         "a": {
@@ -104,12 +81,10 @@ if __name__ == "__main__":
         }
     }
 
-    a = NestedDict({'r': 's'})
-
     t = NestedDict(d)
     # t.nested_set('a__b__k', '$')
     # t.nested_set('k', '$')
     # ret = t.short_get('b')
     # ret = t.long_set('k', '20')
-    ret = a.short_get('r')
-    print(ret)
+    t.short_set('b', '$')
+    print(t)

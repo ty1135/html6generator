@@ -49,13 +49,17 @@ class CustomWidget(BaseCompositeWidget, CustomWidgetSkeleton, ControlAbility):
 
 
 if __name__ == '__main__':
-    import pprint
     import atomic_widgets
 
     b = atomic_widgets.Button(disable=True, icon='icon/url', label='token_label')
-    c = DefaultWidget(type='single-test')
+    c = DefaultWidget()
 
     c.add_widgets(b)
-    pprint.pprint(c)
 
+    c.add_method(
+        name='del',
+        http_method='del',
+        payload=[(b['id'], b.onto('disable', 'icon', 'label'))],
+        body={}
+    )
     c.dump()

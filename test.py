@@ -111,7 +111,7 @@ pic_search = DefaultWidget(type='rnc-pic-search', description='召回图片')
 clip_rule.add_widgets(word_arrangment, pic_search)
 
 # 默认召回图片 = #召回图片title + 属性label + 关系Select + 值textfield +
-#            +  输出数量textField+位置select +label图片选择顺序 + TODO 蛇皮表格
+#            +  输出数量textField+位置select +label图片选择顺序 +  蛇皮表格 + 添加button + 删除button
 
 # pic_title = Label(text='召回图片')
 attr_label = Label(text='属性label：')
@@ -252,7 +252,10 @@ snake_table = {
   }
 }
 
-pic_search.add_widgets(attr_label, relation_select, value_select, output_num, pos_select, pic_order_label, snake_table)
+pic_add_button = Button(icon='/add/img.png', disable=False)
+pic_del_button = Button(icon='/del/img.png', disable=False)
+
+pic_search.add_widgets(attr_label, relation_select, value_select, output_num, pos_select, pic_order_label, snake_table, pic_add_button, pic_del_button)
 
 # 默认文字排版 = 粒度select + 最大字数（句子数）textfield+ Label多余文字处理 +CheckBox
 granularity = Select(label='粒度：', option=[
@@ -267,7 +270,7 @@ word_arrangment.add_widgets(granularity, max_word, extra_word_label, extra_word)
 
 # 拼接规则 =  拼接规则label + 单条默认拼接规则
 glue_rule_title = Label(text='拼接规则')
-single_glue_rule = DefaultWidget(type='rnc-glue-rule', desciption='拼接规则默认组件')
+single_glue_rule = DefaultWidget(type='rnc-glue-rule', description='拼接规则默认组件')
 
 glue_rule.add_widgets(glue_rule_title, single_glue_rule)
 
@@ -537,6 +540,23 @@ filter_button.add_method(
     body=[(c_bucket['id'], c_bucket)]
 )
 
+#####################################################
+import copy
+
+ps = copy.deepcopy(pic_search)
+pic_add_button.add_method(
+    name='add',
+    http_method='post',
+    payload=[(ps['id'], ps)],
+    body=[(ps['id'], ps)]
+)
+
+pic_del_button.add_method(
+    name='del',
+    http_method='del',
+    payload=[(ps['id'], {"id": ps['id']})],
+    body={}
+)
 
 
 if __name__ == "__main__":
@@ -554,9 +574,5 @@ if __name__ == "__main__":
     import subprocess
 
 
-    def write_to_clipboard(output):
-        process = subprocess.Popen(
-            'pbcopy', env={'LANG': 'en_US.UTF-8'}, stdin=subprocess.PIPE)
-        process.communicate(output.encode('utf-8'))
 
-    write_to_clipboard(ret)
+    print("!!"*10)

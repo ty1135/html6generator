@@ -1,4 +1,5 @@
-from .utils import NestedDict, nested_set, nested_del
+from .utils import NestedDict, nested_del
+from .fields import validate_field
 
 import json
 
@@ -9,31 +10,46 @@ class BaseWidget(NestedDict):
         self.init_from_skeleton()
         self.init_from_widget()
         self.init_from_kwargs(kwargs)
+
+        validate_field(self)
         nested_del(self)
 
     def init_from_skeleton(self):
         for field, value in super().get_skeleton().items():
-            self[field] = value() if callable(value) else value
+            real_value = value() if callable(value) else value
+            self.long_set(field, real_value)
 
     def init_from_widget(self):
         if hasattr(self, '__fields__'):
             for field in self.__fields__:
-                self[field] = None
+                self.long_set(field, None)
 
     def init_from_kwargs(self, kwargs):
         for field in kwargs:
             if '__' in field:
-                self[field] = kwargs[field]
+                self.long_set(field, kwargs[field])
             else:
-                nested_set(self, field, kwargs[field])
+                self.short_set(field, kwargs[field])
 
     def onto(self, *args):
         ret = {}
         for arg in args:
-            ret[arg] = self.nested_get(arg)
+            ret[arg] = self.short_get(arg)
         return ret
 
     def dump(self):
+        import subprocess
+
+        # get string
         ret = json.dumps(self)
+
+        # print
         print(ret)
-        return ret
+
+        # write_to_clipboard
+        process = subprocess.Popen(
+            'pbcopy',
+            env={'LANG': 'en_US.UTF-8'},
+            stdin=subprocess.PIPE
+        )
+        process.communicate(ret.encode('utf-8'))
