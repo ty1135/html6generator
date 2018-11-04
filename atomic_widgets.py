@@ -115,7 +115,11 @@ class TimeLine(GeneralWidget):
 
 
 class Tree(GeneralWidget):
-    pass
+    __fields__ = [
+        'view__props__multiple',
+        'model__title',
+        'node',
+    ]
 
 
 if __name__ == '__main__':

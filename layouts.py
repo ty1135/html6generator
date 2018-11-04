@@ -22,23 +22,23 @@ class GeneralLayout(BaseWidget, LayoutSkeleton):
 # All Widgets
 class FlowLayout(GeneralLayout):
     __fields__ = [
-        'attributes__flex-direction',
-        'attributes__justify-content',
-        'attributes__align-items'
+        'attributes__flex_direction',
+        'attributes__justify_content',
+        'attributes__align_items'
     ]
 
 
 class BorderLayout(GeneralLayout):
     __fields__ = [
-        'attributes__flex-direction',
-        'attributes__justify-content',
+        'attributes__flex_direction',
+        'attributes__justify_content',
     ]
 
 
 class BoxLayout(GeneralLayout):
     __fields__ = [
-        'attributes__flex-direction',
-        'attributes__justify-content',
+        'attributes__flex_direction',
+        'attributes__justify_content',
     ]
 
 
