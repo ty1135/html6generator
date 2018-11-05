@@ -56,6 +56,7 @@ class Pagination(GeneralWidget):
     __fields__ = [
         'model__page',
         'model__pages',
+        'model__page_size',
     ]
 
 

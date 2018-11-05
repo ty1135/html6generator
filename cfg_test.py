@@ -3,7 +3,7 @@ from atomic_widgets import (Button, CheckBox, DotCluster, Label, Pagination,
                             ProgressBar, Radio, ScrollBar, Select, TextArea,
                             TextField, TimeLine, Tree)
 
-from layouts import BoxLayout, CardLayout
+from layouts import BoxLayout, CardLayout, PopupLayout
 
 
 def div(direction, description):
@@ -18,7 +18,7 @@ def div(direction, description):
 whole_thing = div('column', '整个页面')
 
 tools_view = div('row', '工具栏')
-workbench = div('row','工作台')
+workbench = div('row', '工作台')
 
 
 whole_thing.add_widgets(tools_view, workbench)
@@ -26,9 +26,9 @@ whole_thing.add_widgets(tools_view, workbench)
 # 工具栏 = 数据集button + 点触button #TODO method里面要写popup
 
 data_button = Button(icon='/url')
-dots_button = Button(icon='/url')
+dot_button = Button(icon='/url')
 
-tools_view.add_widgets(data_button, dots_button)
+tools_view.add_widgets(data_button, dot_button)
 
 
 # 工作台 = 模型部分 + 其他部分（测试集部分 + 运行信息部分 + 编辑）
@@ -40,7 +40,7 @@ workbench.add_widgets(model_section, other_section)
 
 # 其他部分 = 上面部分（测试集部分 + 运行信息部分） + 编辑器
 top_section = div('row', '上面部分')
-edit_section = div('column', '上面部分')
+edit_section = div('column', '编辑部分')
 other_section.add_widgets(top_section, edit_section)
 
 # 上面部分 = 测试集部分 + 运行信息部分
@@ -52,7 +52,7 @@ top_section.add_widgets(test_section, info_section)
 
 button_part = div('row', '模型部分——按钮部分')
 model_cards = CustomWidget(layout=CardLayout(index=0), description='卡片切换部分')
-
+model_section.add_widgets(button_part, model_cards)
 # 按钮部分 = 模版按钮 + 词表按钮
 
 template_button = Button(label='模版按钮')
@@ -71,33 +71,35 @@ model_cards.add_widgets(model_main, words_main)
 model_search_part = div('row', '搜索框部分')
 
 model_main_content = Tree() #TODO solve this tree
-fold_button = Button(label='<< 折叠导航栏')
+fold_button = Button(label='<< 折叠导航栏') # TODO 可以不要把属性改成可折叠
 model_main.add_widgets(model_search_part, model_main_content, fold_button)
 
 
 # 搜索框部分 = 按钮 + 搜索输入框field
 model_search_button = Button(icon='/url')
-model_search_input_field = TextField(editable='True')
+model_search_input_field = TextField(editable='True', text='搭配')
 model_search_part.add_widgets(model_search_button, model_search_input_field)
 
 ## 词表正文部分 = 搜索框部分 + 词表正文内容
 words_search_part = div('row', '搜索框部分')
 
 words_main.add_widgets(words_search_part, )
-words_main_content = Tree() #TODO solve this tree
+words_main_content = Tree()  #TODO solve this tree
 
 # 搜索框部分 = 按钮 + 搜索输入框field
 words_search_button = Button(icon='/url')
-words_search_input_field = TextField(editable='True')
-words_search_part.add_widgets(words_search_button, model_search_input_field)
+words_search_input_field = TextField(editable='True', text='地点')
+words_search_part.add_widgets(words_search_button, words_search_input_field)
 
 
 
 #######################测试集部分 = 测试集标签 + 正文 + 分页 + 分析按钮
 test_section_label = Label(text='测试集')
 single_test = TextField(text='whatever', editable=True)
-pagination = Pagination(page=1, pages=2)
+pagination = Pagination(page=1, pages=2, page_size=1)
 analyze_button = Button(label='分析')
+
+test_section.add_widgets(test_section_label, single_test, pagination, analyze_button)
 
 #######################运行信息部分 = 运行信息标签 + 2个textfield + 正文
 info_lable = Label(text='运行信息')
@@ -114,6 +116,133 @@ edit_section.add_widgets(edit_label, edit_main)
 
 
 
+##
+##
+##
+## 数据集的交互
+data_popup = CustomWidget(
+        layout=PopupLayout(position='trigger_right'),
+        description='数据集弹框'
+)
+
+data_popup_material = div('column', '数据集实质')
+
+data_popup.add_widgets(data_popup_material)
+
+data_popup_label = Label(text='数据集')
+data_popup_textfield_a = TextField(text='矮胖设计图1', label='名称')
+data_popup_textfield_b = TextField(text='200条', label='数据量')
+
+data_popup_material.add_widgets(data_popup_label, data_popup_textfield_a, data_popup_textfield_b)
+
+data_button.add_method(
+    name='pop_up',
+    http_method='local',
+    payload=[(data_button['id'], {})],
+    body=[(data_popup['id'], data_popup.onto('position', 'layout', 'component'))],
+)
+
+##
+##
+##
+## 点触交互
+
+dot_popup = CustomWidget(
+        layout=PopupLayout(position='trigger_right'),
+        description='点触'
+)
+
+dot_popup_material = div('column', '点触实质')
+
+dot_popup.add_widgets(dot_popup_material)
+
+dot_popup_select = Select(option=[{"text": '生产成功', "value": '生产成功'},
+                                  {"text": '生产失败', "value": '生产失败'}
+                                  ], choice='生产成功')
+dot_popup_dot_cluster = DotCluster(row_size=5, dot=[{"text": 10, "color": "red"}, {"text": 11, "color": "red"},{"text":12, "color": "red"},{"text":13, "color": "red"},{"text":14, "color": "red"}])
+dot_popup_pagination = Pagination(page=1, pages=2, page_size=5)
+
+dot_popup_material.add_widgets(dot_popup_select, dot_popup_dot_cluster, dot_popup_pagination)
+
+dot_button.add_method(
+    name='pop_up',
+    http_method='local',
+    payload=[(dot_button['id'], {})],
+    body=[(dot_popup['id'], dot_popup.onto('position', 'layout', 'component'))],
+)
+
+
+dot_popup_pagination.add_method(
+    name='paging',
+    http_method='put',
+    payload=[(dot_popup_pagination['id'], dot_popup_pagination.onto('page', 'pages', 'page_size')),
+             (dot_popup_select['id'], {"choice": '生产成功'})],
+    body=[(dot_popup_dot_cluster['id'], dot_popup_dot_cluster.onto('dot', 'row_size'))],
+)
+
+
+## 左边折叠
+workbench['layout']['attributes']['foldable_vector'] = [True, False]
+workbench['layout']['attributes']['folding_states'] = [False, False]
+
+
+## 右边折叠
+top_section['layout']['attributes']['foldable_vector'] = [False, True]
+top_section['layout']['attributes']['folding_states'] = [False, False]
+
+
+## 下面折叠
+other_section['layout']['attributes']['foldable_vector'] = [False, True]
+other_section['layout']['attributes']['folding_states'] = [False, False]
+
+
+## cardlayout的两个button
+template_button.add_method(
+    name='turn_over',
+    http_method='local',
+    payload=[(template_button['id'], {})],
+    body=[(model_cards['id'], model_cards.onto('index'))],
+)
+
+
+dot_button.add_method(
+    name='turn_over',
+    http_method='local',
+    payload=[(dot_button['id'], {})],
+    body=[(model_cards['id'], model_cards.onto('index'))],
+)
+
+model_search_button.add_method(
+    name='model_search',
+    http_method='get',
+    payload=[(model_search_input_field['id'], model_search_input_field.onto('text'))],
+    body=[(model_main_content['id'], model_main_content)]
+)
+
+words_search_button.add_method(
+    name='words_search',
+    http_method='get',
+    payload=[(words_search_input_field['id'], words_search_input_field.onto('text'))],
+    body=[(words_main_content['id'], words_main_content)]
+)
+
+## 测试机分页
+pagination.add_method(
+    name='paging',
+    http_method='get',
+    payload=[(pagination['id'], pagination.onto('page', 'pages', 'page_size'))],
+    body=[(single_test['id'], single_test)]
+)
+
+## 编辑区
+edit_main.add_method(
+    name='update',
+    http_method='put',
+    payload=[(edit_main['id'], edit_main.onto('text'))],
+    body=[(edit_main['id'], edit_main.onto('text'))]
+)
+
 if __name__ =="__main__":
     whole_thing.dump()
-    # 交互和隐藏还没做还有popup
+    print('?')
+    # tree 的交互，点击影响编辑区
