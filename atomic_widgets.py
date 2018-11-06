@@ -2,7 +2,7 @@ from fundamentals.widgets import BaseWidget
 from control import ControlAbility
 
 import uuid
-
+import random
 
 # Format
 class WidgetSkeleton(object):
@@ -122,9 +122,82 @@ class Tree(GeneralWidget):
         'node',
     ]
 
+    def __init__(self, *args, **kwargs):
+        if 'node' not in kwargs:
+            kwargs['node'] = []
+            super().__init__(*args, **kwargs)
+
+    def add_node(self, *node_dicts):
+        node_list = self.short_get('node')
+        for node in node_dicts:
+            node_list.append(node)
+
+
+class Node(dict):
+    def __init__(self, **kwargs):
+        if 'id' not in kwargs:
+            kwargs['id'] = str(uuid.uuid4())
+        if 'action' not in kwargs:
+            kwargs['action'] = ["create", "update", "delete"]
+        if 'children' not in kwargs:
+            kwargs['children'] = []
+        if 'name' not in kwargs:
+            raise Exception('Every node needs a name')
+        super().__init__(**kwargs)
+
+    def add_children(self, *sub_nodes):
+        for sub in sub_nodes:
+            self['children'].append(sub)
+
+
+class TreeSelect(GeneralWidget):
+    __fields__ = [
+        'view__props__label',
+        'view__props__editable',
+        'tree_direction',
+        'option_tree',
+        'model__value'
+    ]
+
+    def __init__(self, *args, **kwargs):
+        if 'option_tree' not in kwargs:
+            kwargs['option_tree'] = []
+        super().__init__(*args, **kwargs)
+
+    def add_node(self, *node_dicts):
+        node_list = self.short_get('option_tree')
+        for node in node_dicts:
+            node_list.append(node)
+
+
+class TreeSelectNode(dict):
+    def __init__(self, **kwargs):
+        if 'text' not in kwargs:
+            raise Exception('text needed when initializing TreeSelectNode')
+        if 'subtree' not in kwargs:
+            kwargs['subtree'] = []
+        if 'value' not in kwargs:
+            kwargs['value'] = random.randint(0, 100)
+        super().__init__(**kwargs)
+
+    def add_children(self, *sub_nodes):
+        for sub in sub_nodes:
+            self['subtree'].append(sub)
+
+
+class EditableSelect(GeneralWidget):
+    __fields__ = [
+        'view__props__label',
+        'view__props__option',
+        'tree_direction',
+        'model__value'
+    ]
+
 
 if __name__ == '__main__':
-    import pprint
-    b = Button(disable=True, icon='icon/url', label='token_label')
-
-    pprint.pprint(b)
+    t = TreeSelect()
+    n1 = TreeSelectNode(name='哈哈')
+    n2 = TreeSelectNode(name='哈哈2')
+    t.add_node(n1)
+    n1.add_children(n2)
+    print(t)

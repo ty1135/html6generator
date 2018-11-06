@@ -53,3 +53,7 @@ class BaseWidget(NestedDict):
             stdin=subprocess.PIPE
         )
         process.communicate(ret.encode('utf-8'))
+
+    def clone(self):
+        import copy
+        return copy.deepcopy(self)

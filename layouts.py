@@ -50,7 +50,14 @@ class CardLayout(GeneralLayout):
 
 class PopupLayout(GeneralLayout):
     __fields__ = [
-        'position',
+        'attributes__position',
+    ]
+
+
+class GridLayout(GeneralLayout):
+    __fields__ = [
+        'attributes__row_size',
+        'attributes__column_size'
     ]
 
 

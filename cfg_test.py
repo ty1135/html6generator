@@ -1,7 +1,7 @@
 from composite_widgets import DefaultWidget, CustomWidget
 from atomic_widgets import (Button, CheckBox, DotCluster, Label, Pagination,
                             ProgressBar, Radio, ScrollBar, Select, TextArea,
-                            TextField, TimeLine, Tree)
+                            TextField, TimeLine, Tree, Node)
 
 from layouts import BoxLayout, CardLayout, PopupLayout
 
@@ -70,9 +70,13 @@ model_cards.add_widgets(model_main, words_main)
 ## 模版正文部分 = 搜索框部分 + 模版正文内容 + 折叠按钮
 model_search_part = div('row', '搜索框部分')
 
-model_main_content = Tree() #TODO solve this tree
-fold_button = Button(label='<< 折叠导航栏') # TODO 可以不要把属性改成可折叠
-model_main.add_widgets(model_search_part, model_main_content, fold_button)
+model_main_content = Tree(multiple=True)
+model_node_a = Node(name='搭配')
+model_node_a_a = Node(name="[搭配.属性-搭配.差异比较对象-搭配.手段-搭配.属性-搭配.差异被比较对象-搭配.感观]")
+model_node_a.add_children(model_node_a_a)
+model_main_content.add_node(model_node_a)
+
+model_main.add_widgets(model_search_part, model_main_content)
 
 
 # 搜索框部分 = 按钮 + 搜索输入框field
@@ -84,7 +88,10 @@ model_search_part.add_widgets(model_search_button, model_search_input_field)
 words_search_part = div('row', '搜索框部分')
 
 words_main.add_widgets(words_search_part, )
-words_main_content = Tree()  #TODO solve this tree
+words_main_content = Tree(multiple=True)
+
+word_node_a = Node(name='消息.内容')
+words_main_content.add_node(word_node_a)
 
 # 搜索框部分 = 按钮 + 搜索输入框field
 words_search_button = Button(icon='/url')
@@ -240,6 +247,91 @@ edit_main.add_method(
     http_method='put',
     payload=[(edit_main['id'], edit_main.onto('text'))],
     body=[(edit_main['id'], edit_main.onto('text'))]
+)
+
+
+## 两个树的交互
+new_node_payload = Node(name='内饰')
+new_node_payload['relation'] = 'child'
+
+model_main_content.add_method(
+    name='create',
+    http_method='post',
+    payload=[
+        (model_main_content['id'], new_node_payload)],
+    body=[(model_main_content['id'], new_node_payload)]
+)
+
+
+model_main_content.add_method(
+    name='update',
+    http_method='put',
+    payload=[
+        (model_node_a['id'], model_node_a)],
+    body=[(model_node_a['id'], model_node_a)]
+)
+
+model_main_content.add_method(
+    name='delete',
+    http_method='del',
+    payload=[
+        (model_node_a['id'], model_node_a)
+    ],
+    body=[],
+)
+
+model_main_content.add_method(
+    # TODO 编辑区？ 怎么知道
+    name='click',
+    http_method='get',
+    payload=[
+        (model_node_a_a['id'], model_node_a)
+    ],
+    body=[
+        (edit_main['id'], edit_main)
+    ]
+)
+
+#######第二棵树
+
+new_node_payload_2 = Node(name='消息.可能性')
+new_node_payload_2['relation'] = 'child'
+
+words_main_content.add_method(
+    name='create',
+    http_method='post',
+    payload=[
+        (words_main_content['id'], new_node_payload_2)],
+    body=[(words_main_content['id'], new_node_payload_2)]
+)
+
+
+words_main_content.add_method(
+    name='update',
+    http_method='put',
+    payload=[
+        (word_node_a['id'], word_node_a)],
+    body=[(word_node_a['id'], model_node_a)]
+)
+
+words_main_content.add_method(
+    name='delete',
+    http_method='del',
+    payload=[
+        (word_node_a['id'], word_node_a)
+    ],
+    body=[],
+)
+
+words_main_content.add_method(
+    name='click',
+    http_method='get',
+    payload=[
+        (word_node_a['id'], word_node_a)
+    ],
+    body=[
+        (edit_main['id'], edit_main)
+    ]
 )
 
 if __name__ =="__main__":
